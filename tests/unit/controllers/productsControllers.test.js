@@ -3,6 +3,8 @@ const { expect } = require("chai");
 
 const services = require("../../../services");
 const productsControllers = require("../../../controllers/productsControllers");
+const httpStatusCode = require("../../../helpers/httpStatusCode");
+
 
 describe("1 - A chamada Controllers da função getAllProducts deve: ", () => {
   describe("caso a consulta ao banco de dados não retorne nenhum produto", () => {
@@ -25,6 +27,25 @@ describe("1 - A chamada Controllers da função getAllProducts deve: ", () => {
 
     });
   });
+
+  describe("Caso ocorre algum erro não especificado", async () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = { status: httpStatusCode.INTERNAL_SERVER, message: "Internal Server Error" };
+    before(() => {
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "getAllProducts").throws(err);
+    });
+    after(() => {
+      services.productsServices.getAllProducts.restore();
+    });
+    it("é chamada a função next passando como parâmetro um ojeto de erro", async () => {
+      await productsControllers.getAllProducts(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });      
+  })
 
   describe("caso a consulta ao banco de dados retorne uma lista de produtos", () => {
     const request = {};
@@ -53,24 +74,21 @@ describe("2 - A chamada Controllers da função getProductById deve: ", () => {
   describe("caso a consulta ao banco de dados não retorne nenhum produto", () => {
     const request = {};
     const response = {};
-    const error = {
-      message: "Product not found",
-      statusCode: 404,
-    };
+    const next = sinon.spy();
+    const err = { status: httpStatusCode.NOT_FOUND, message: "Product not found" };
     before(() => {
       request.params = "wrong param";
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
-      sinon.stub(services.productsServices, "getProductById").throws(error);
+      sinon.stub(services.productsServices, "getProductById").throws(err);
     });
     after(() => {
       services.productsServices.getProductById.restore();
     });
 
-    it("É chamado o send com código 404 e a mensagem 'Product not found'", async () => {
-      await productsControllers.getProductById(request, response);
-      expect(response.status.calledWith(error.statusCode)).to.be.equal(true);
-      expect(response.json.calledWith({ message: error.message })).to.be.equal(true);
+    it("é chamada a função next passando como parâmetro um ojeto de erro", async () => {
+      await productsControllers.getProductById(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
     });
   });
 
