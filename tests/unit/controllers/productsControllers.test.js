@@ -86,7 +86,7 @@ describe("2 - A chamada Controllers da função getProductById deve: ", () => {
       services.productsServices.getProductById.restore();
     });
 
-    it("é chamada a função next passando como parâmetro um ojeto de erro", async () => {
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
       await productsControllers.getProductById(request, response, next);
       expect(next.calledWith(err)).to.be.equal(true);
     });
@@ -113,3 +113,70 @@ describe("2 - A chamada Controllers da função getProductById deve: ", () => {
     });
   });
 });
+
+describe('3 - A chamada Controllers da função addProducts deve:', () => {
+  describe('Caso o corpo da requisição não tenha a chave name', () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.BAD_REQUEST,
+      message: '"name" is required',
+    };
+    before(() => {
+      request.body = { name: '' };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "addProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.addProduct.restore();
+    });
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.addProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso a chave name do corpo da requisição tenha tamanho menor que 5", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.BAD_REQUEST,
+      message: '"name" length must be at least 5 characters long',
+    };
+    before(() => {
+      request.body = { name: "1234" };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "addProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.addProduct.restore();
+    });
+    it("ser chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.addProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso o name esteja correto", () => {
+    const request = {};
+    const response = {};
+    const result = {id:4, name: "ProductX" };
+    before(() => {
+        request.body = { name: "ProductX" };
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+        sinon.stub(services.productsServices, "addProduct").resolves(result);    
+    })
+    after(() => {
+      services.productsServices.addProduct.restore();
+    });
+    it("a resposta dever ser o produto cadastrado", async () => {
+      const teste = await productsControllers.addProduct(request, response);
+      expect(response.status.calledWith(201)).to.be.equal(true);
+      expect(response.json.calledWith(result)).to.be.equal(true);
+    });
+  });
+});
+

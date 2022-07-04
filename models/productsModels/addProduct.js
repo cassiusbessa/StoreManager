@@ -1,13 +1,13 @@
 const connection = require('../../helpers/connection');
 
-const addProduct = async (newProduct) => {
+const addProduct = async (productName) => {
   const [result] = await connection.execute(
     'INSERT INTO StoreManager.products (name) VALUES (?)',
-    [newProduct],
+    [productName],
   );
   const product = {
     id: result.insertId,
-    name: newProduct,
+    name: productName,
   };
   return product;
 };

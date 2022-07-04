@@ -6,7 +6,6 @@ const addProduct = async (req, res, next) => {
     const newProducts = await services.productsServices.addProduct(name);
     return res.status(201).json(newProducts);
   } catch (err) {
-    console.log('entrei no catch');
     next(err);
   }
 };

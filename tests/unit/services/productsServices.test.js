@@ -51,7 +51,9 @@ describe("2 - A chamada Services da função getProductById deve: ", () => {
 
     it("Lançar um erro", async () => {
       try {
-           await productsServices.getProductById('wrong param');        
+        await productsServices.getProductById('wrong param');
+        expect.fail("deveria lançar um erro");
+
       } catch (error) {
         expect(error.message).to.equals("Product not found");        
       }
@@ -75,4 +77,46 @@ describe("2 - A chamada Services da função getProductById deve: ", () => {
     });
   });
 });
+
+
+describe('3 - A chamada Services da função addProduct deve:', () => {
+  describe("caso o nome do produto não tenha sido informado", () => {
+    const productName = ""
+    it('lançar um erro com a mensagem: "name" is required', async () => {
+      try {
+        await productsServices.addProduct(productName);
+        expect.fail('deveria lançar um erro');
+      } catch (err) {
+        expect(err.message).to.equals('"name" is required');
+      }
+    });
+  });
+
+  describe("caso o nome do produto tenha menos que 5 caractéres", () => {
+    const productName = '>5'
+    it('lançar um erro com a mensagem: "name" length must be at least 5 characters long', async () => {
+      try {
+        await productsServices.addProduct(productName);
+        expect.fail('deveria lançar um erro');
+      } catch (err) {
+        expect(err.message).to.equals('"name" length must be at least 5 characters long');
+      }
+    });
+  });
+
+  describe("caso o nome do produto seja informado corretamente", () => {
+    const newProduct = { name: "ProdutoX", id: 4 }
+    before(() => {
+      sinon.stub(models.productsModels, 'addProduct').resolves(newProduct);
+    });
+    after(() => {
+      models.productsModels.addProduct.restore();
+    });
+    it('retornar o produto cadastrado', async () => {
+      const result = await productsServices.addProduct(newProduct.name);
+      console.log(result);
+      expect(result).to.deep.equals(newProduct);
+    })
+  })
+})
 

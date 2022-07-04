@@ -42,7 +42,7 @@ describe('1 - A chamada Models da função getAllProducts deve:', ()=>{
 })
 
 describe("2 - A chamada Models da função getProductsById deve:", () => {
-  describe("caso não o id não exisde nos dados do banco, retorna array vazio", () => {
+  describe("caso não o id não exista nos dados do banco, retorna array vazio", () => {
     const result = [[]];
 
     beforeEach(() => {
@@ -78,3 +78,25 @@ describe("2 - A chamada Models da função getProductsById deve:", () => {
     });
   });
 });
+
+describe("3 - A chamada Models da função addProduct deve:", () => {  
+  describe("cadastrar adequadamente o produto", () => {
+    const result = [{
+      insertId: 4,
+    }];
+    const product = {
+      id: result[0].insertId,
+      name: "ProdutoX",
+    };
+    before(() => {
+      sinon.stub(connection, "execute").resolves(result);
+    });
+    after(() => {
+      connection.execute.restore();
+    });
+    it("o produto deve ter o nome e o id corretos", async () => {
+      const newProduct = await productsModels.addProduct('ProdutoX');
+      expect(newProduct).to.deep.equals(product);
+    });
+  });
+ });
