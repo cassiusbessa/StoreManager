@@ -41,7 +41,7 @@ describe("1 - A chamada Controllers da função getAllProducts deve: ", () => {
     after(() => {
       services.productsServices.getAllProducts.restore();
     });
-    it("é chamada a função next passando como parâmetro um ojeto de erro", async () => {
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
       await productsControllers.getAllProducts(request, response, next);
       expect(next.calledWith(err)).to.be.equal(true);
     });      

@@ -4,7 +4,7 @@ const connection = require('../../../helpers/connection');
 const productsModels = require("../../../models/productsModels");
 
 describe('1 - A chamada Models da função getAllProducts deve:', ()=>{
-  describe('caso não tenham dados no banco, retorna array vazio', ()=>{
+  describe('caso não tenham dados no banco', ()=>{
     const result = [[]];
 
     beforeEach(()=>{
@@ -15,7 +15,7 @@ describe('1 - A chamada Models da função getAllProducts deve:', ()=>{
       connection.execute.restore();
     })
 
-    it('retorna um array',  async ()=>{
+    it('retornar um array',  async ()=>{
       const result = await productsModels.getAllProducts();
       expect(result).to.be.an('array');
     })

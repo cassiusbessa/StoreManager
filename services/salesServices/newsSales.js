@@ -36,4 +36,4 @@ const newsSales = async (itemsSold) => {
   return sale;
 };
 
-module.exports = newsSales;
+module.exports = { newsSales, salesValidator };
