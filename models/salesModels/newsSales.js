@@ -1,14 +1,14 @@
 const connection = require('../../helpers/connection');
 
-const productSale = async (saleId, productId, quantity) => {
-    console.log('cheguei na models', saleId, productId, quantity);
+const productSale = async (id, productId, quantity) => {
+    console.log('cheguei na models', id, productId, quantity);
     await connection.execute(
       'INSERT INTO StoreManager.sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)',
-      [saleId, productId, quantity],
+      [id, productId, quantity],
     );
   console.log('passei do connection');
   return ({
-    saleId,
+    id,
     productId,
     quantity,
   });
