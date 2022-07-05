@@ -22,13 +22,9 @@ const salesValidator = (sales, products) => {
 };
 
 const newsSales = async (itemsSold) => {
-  console.log('service>>>>>>>>>>', itemsSold);
   const allProducts = await models.productsModels.getAllProducts();
-  itemsSold.forEach((item) => {
-    salesValidator(item, allProducts);
-  });
+  itemsSold.forEach((item) => salesValidator(item, allProducts));
   const id = await models.salesModels.newsSales.dateSale();
-  console.log('saleId', id);
   await Promise.all(itemsSold.map((e) =>
     models.salesModels.newsSales.productSale(id, e.productId, e.quantity)));
   // itemsSold.forEach((e) => models.salesModels.newsSales
@@ -37,7 +33,6 @@ const newsSales = async (itemsSold) => {
     id, 
     itemsSold,
   };
-  console.log('service >>>>>', sale);
   return sale;
 };
 
