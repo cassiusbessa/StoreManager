@@ -116,7 +116,7 @@ describe('3 - A chamada Services da função addProduct deve:', () => {
       const result = await productsServices.addProduct(newProduct.name);
       console.log(result);
       expect(result).to.deep.equals(newProduct);
-    })
-  })
-})
+    });
+  });
+});
 

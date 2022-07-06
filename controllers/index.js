@@ -1,7 +1,7 @@
 const { getAllProducts, getProductById, addProduct } = require('./productsControllers');
-const { newsSales } = require('./salesControllers');
+const { newsSales, getSalesById, getAllSales } = require('./salesControllers');
 
 module.exports = {
   productsControllers: { getAllProducts, getProductById, addProduct },
-  salesControllers: { newsSales },
+  salesControllers: { newsSales, getSalesById, getAllSales },
 };

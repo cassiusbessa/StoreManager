@@ -1,5 +1,4 @@
 const models = require('../../models');
-// const salesSchema = require('../../schemas/salesSchema');
 const ErrorObject = require('../../helpers/errorObject');
 const httpStatusCode = require('../../helpers/httpStatusCode');
 

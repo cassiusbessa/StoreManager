@@ -102,10 +102,8 @@ describe("4 - A chamada Services da função newsSales deve:", () => {
       sinon.stub(salesServices, "salesValidator").throws();
       sinon
         .stub(models.salesModels.newsSales, "productSale")
-        .onCall(0)
-        .resolves(itemsSold)
-        .onCall(1)
-        .resolves(itemsSold);
+        .onCall(0).resolves(itemsSold)
+        .onCall(1).resolves(itemsSold);
     });
     it('lançar um erro com a mensagem: "quantity" must be greater than or equal to 1', async () => {
       try {
