@@ -15,9 +15,7 @@ const serialize = (sale) => ({
   quantity: sale.quantity,
 });
 const getAllSales = async () => {
-  console.log('amei no services');
   const sales = await models.salesModels.getAllSales();
-  console.log('amei de novo no services');
   salesValidator(sales);
   return sales.map((s) => serialize(s));
 };

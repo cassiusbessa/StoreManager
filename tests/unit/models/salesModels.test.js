@@ -38,3 +38,83 @@ describe("4 - A chamada Models da função productSale deve:", () => {
   });
 });
 
+describe("5 - A chamada Models da função getAllSales deve:", () => {
+  describe('caso não tenham dados no banco', () => {
+    const result = [[]];
+
+    beforeEach(() => {
+      sinon.stub(connection, 'execute').resolves(result);
+    });
+
+    afterEach(() => {
+      connection.execute.restore();
+    })
+
+    it('retornar um array vazio', async () => {
+      const result = await salesModels.getAllSales();
+      expect(result).to.be.an('array').that.is.empty;
+    })
+  });
+  describe('caso tenham dados no banco, retorna array de objetos com os dados', () => {
+      const result = [[
+        { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 1, quantity: 5 },
+        { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 2, quantity: 10 },
+        { date: "2022-07-06T15:54:07.000Z", saleId: 2, productId: 3, quantity: 15 },
+      ]];
+      beforeEach(() => {
+        sinon.stub(connection, 'execute').resolves(result);
+      });
+      afterEach(() => {
+        connection.execute.restore();
+      })
+      it('retorna um array', async () => {
+        const result = await salesModels.getAllSales();
+        expect(result).to.be.an('array');
+      })
+      it('com os dados das vendas', async () => {
+        const sales = await salesModels.getAllSales();
+        expect(sales).to.deep.equals(result[0]);
+      })
+    })
+});
+
+describe("6 - A chamada Models da função getSalesById deve:", () => {
+  describe("caso não tenham dados no banco", () => {
+    const result = [[]];
+
+    beforeEach(() => {
+      sinon.stub(connection, "execute").resolves(result);
+    });
+
+    afterEach(() => {
+      connection.execute.restore();
+    });
+
+    it("retornar um array vazio", async () => {
+      const result = await salesModels.getSalesById(1);
+      expect(result).to.be.an("array").that.is.empty;
+    });
+  });
+  describe("caso tenham dados no banco, retorna array de objetos com os dados", () => {
+    const result = [[
+        { date: "2022-07-06T15:54:07.000Z",  saleId: 1, productId: 1, quantity: 5 },
+        { date: "2022-07-06T15:54:07.000Z",  saleId: 1, productId: 2, quantity: 10 },
+      ]];
+    beforeEach(() => {
+      sinon.stub(connection, "execute").resolves(result);
+    });
+    afterEach(() => {
+      connection.execute.restore();
+    });
+    it("retorna um array", async () => {
+      const result = await salesModels.getAllSales(1);
+      expect(result).to.be.an("array");
+    });
+    it("com os dados das vendas", async () => {
+      const sales = await salesModels.getAllSales(1);
+      expect(sales).to.deep.equals(result[0]);
+    });
+  });
+});
+
+

@@ -53,3 +53,98 @@ describe("4 - A chamada Controllers da função newsSales deve:", () => {
     });
   });
 });
+
+describe("5 - A chamada Controllers da função getAllSales deve:", () => {
+  describe("Caso a camada Controllers retorne algum erro", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.BAD_REQUEST,
+      message: 'error message',
+    };
+    before(() => {
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.salesServices, "getAllSales").throws(err);
+    });
+    after(() => {
+      services.salesServices.getAllSales.restore();
+    });
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await salesControllers.getAllSales(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso a camada Controllers retorne o array de vendas buscado", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const result = [
+    { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 1, quantity: 5 },
+    { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 2, quantity: 10 },
+    { date: "2022-07-06T15:54:07.000Z", saleId: 2, productId: 3, quantity: 15 }];
+    before(() => {
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.salesServices, "getAllSales").resolves(result);
+    });
+    after(() => {
+      services.salesServices.getAllSales.restore();
+    });
+    it("a resposta dever ser o array de vendas cadastrada", async () => {
+      await salesControllers.getAllSales(request, response, next);
+      expect(response.status.calledWith(200)).to.be.equal(true);
+      expect(response.json.calledWith(result)).to.be.equal(true);
+    });
+  });
+});
+
+describe("6 - A chamada Controllers da função getSalesById deve:", () => {
+  describe("Caso a camada Controllers retorne algum erro", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.BAD_REQUEST,
+      message: 'error message',
+    };
+    before(() => {
+      request.params = "wrong param";
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.salesServices, "getSalesById").throws(err);
+    });
+    after(() => {
+      services.salesServices.getSalesById.restore();
+    });
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await salesControllers.getSalesById(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso a camada Controllers retorne o array de vendas buscado", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const result = [
+    { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 1, quantity: 5 },
+    { date: "2022-07-06T15:54:07.000Z", saleId: 1, productId: 2, quantity: 10 },
+    ];
+    before(() => {
+      request.params = 1;
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.salesServices, "getSalesById").resolves(result);
+    });
+    after(() => {
+      services.salesServices.getSalesById.restore();
+    });
+    it("a resposta dever ser o array de vendas cadastrada", async () => {
+      await salesControllers.getSalesById(request, response, next);
+      expect(response.status.calledWith(200)).to.be.equal(true);
+      expect(response.json.calledWith(result)).to.be.equal(true);
+    });
+  });
+});
+
