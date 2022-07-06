@@ -1,7 +1,7 @@
-const { getAllProducts, getProductById, addProduct } = require('./productsServices');
+const { getAllProducts, getProductById, addProduct, updateProduct } = require('./productsServices');
 const { newsSales, salesValidator, getSalesById, getAllSales } = require('./salesServices');
 
 module.exports = {
-  productsServices: { getAllProducts, getProductById, addProduct },
+  productsServices: { getAllProducts, getProductById, addProduct, updateProduct },
   salesServices: { newsSales, salesValidator, getSalesById, getAllSales },
 };

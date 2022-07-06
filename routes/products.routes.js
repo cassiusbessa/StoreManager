@@ -5,6 +5,7 @@ const productsRoutes = express.Router();
 
 productsRoutes.get('/', controllers.productsControllers.getAllProducts);
 productsRoutes.post('/', controllers.productsControllers.addProduct);
+productsRoutes.put('/:id', controllers.productsControllers.updateProduct);
 productsRoutes.get('/:id', controllers.productsControllers.getProductById);
 
 module.exports = productsRoutes;
