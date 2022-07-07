@@ -1,8 +1,8 @@
-const { getAllProducts, getProductById, addProduct,
+const { getAllProducts, getProductById, addProduct, deleteProduct,
   updateProduct } = require('./productsControllers');
 const { newsSales, getSalesById, getAllSales } = require('./salesControllers');
 
 module.exports = {
-  productsControllers: { getAllProducts, getProductById, addProduct, updateProduct },
+  productsControllers: { getAllProducts, getProductById, addProduct, updateProduct, deleteProduct },
   salesControllers: { newsSales, getSalesById, getAllSales },
 };
