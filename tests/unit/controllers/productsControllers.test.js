@@ -173,9 +173,100 @@ describe('3 - A chamada Controllers da função addProducts deve:', () => {
       services.productsServices.addProduct.restore();
     });
     it("a resposta dever ser o produto cadastrado", async () => {
-      const teste = await productsControllers.addProduct(request, response);
+      await productsControllers.addProduct(request, response);
       expect(response.status.calledWith(201)).to.be.equal(true);
       expect(response.json.calledWith(result)).to.be.equal(true);
+    });
+  });
+});
+
+describe("7 - A chamada Controllers da função updateProduct deve:", () => {
+  describe("Caso o corpo da requisição não tenha a chave name", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.BAD_REQUEST,
+      message: '"name" is required',
+    };
+    before(() => {
+      request.params = 1;
+      request.body = { name: "" };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "updateProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.updateProduct.restore();
+    });
+    it("é chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.updateProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso a chave name do corpo da requisição tenha tamanho menor que 5", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.UNPROCESSABLE_ENTITY,
+      message: '"name" length must be at least 5 characters long',
+    };
+    before(() => {
+      request.params = 1;
+      request.body = { name: "1234" };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "updateProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.updateProduct.restore();
+    });
+    it("ser chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.updateProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso o name esteja correto e o id do produto não seja encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.NOT_FOUND,
+      message: 'Product not found',
+    };
+    before(() => {
+      request.params = 'id not found';
+      request.body = { name: "12345" };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "updateProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.updateProduct.restore();
+    });
+    it("ser chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.updateProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso o name seja correto e o id do produto encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    before(() => {
+      request.params = { id: 1 };
+      request.body = { name: 'Luva de Predero' };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "updateProduct").resolves(1);
+    });
+    after(() => {
+      services.productsServices.updateProduct.restore();
+    });
+    it("a resposta dever ser o produto atualizado", async () => {
+      await productsControllers.updateProduct(request, response);
+      expect(response.status.calledWith(200)).to.be.equal(true);
+      expect(response.json.calledWith({id: request.params.id, name: request.body.name})).to.be.equal(true);
     });
   });
 });

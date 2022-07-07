@@ -5,7 +5,6 @@ const updateProduct = async (req, res, next) => {
   const { id } = req.params;
   try {
     await services.productsServices.updateProduct(id, name);
-    console.log('amei no controllers');
     return res.status(200).json({ id, name });
   } catch (err) {
     next(err);

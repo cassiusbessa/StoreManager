@@ -3,7 +3,6 @@ const ErrorObject = require('../../helpers/errorObject');
 const httpStatusCode = require('../../helpers/httpStatusCode');
 
 const updateNameValidator = (name) => {
-  console.log('validator>>>', name);
   if (!name) throw new ErrorObject('"name" is required', httpStatusCode.BAD_REQUEST);
   if (name.length < 5) {
     throw new ErrorObject(

@@ -99,4 +99,35 @@ describe("3 - A chamada Models da função addProduct deve:", () => {
       expect(newProduct).to.deep.equals(product);
     });
   });
- });
+});
+ 
+describe("7 - A chamada Models da função updateProduct deve:", () => {
+  describe("Quando não recebe parâmetros", () => {
+    before(() => {
+      sinon.stub(connection, "execute").throws();
+    });
+    after(() => {
+      connection.execute.restore();
+    });
+    it("lança um erro", async () => {
+      try {        
+        await productsModels.updateProduct();
+      } catch (err) {
+        expect(err).to.exist;
+      }
+    });
+  });
+  describe("Quando chamado corretamente", () => {
+    const result = [{ affectedRows: 1 }];
+    before(() => {
+      sinon.stub(connection, "execute").resolves(result);
+    });
+    after(() => {
+      connection.execute.restore();
+    });
+    it("somente uma coluna deve ter sido alterada", async () => {
+      const updateProduct = await productsModels.updateProduct(1);
+      expect(updateProduct).to.equals(result[0].affectedRows);
+    });
+  });
+});

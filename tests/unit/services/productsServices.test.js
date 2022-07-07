@@ -114,8 +114,69 @@ describe('3 - A chamada Services da função addProduct deve:', () => {
     });
     it('retornar o produto cadastrado', async () => {
       const result = await productsServices.addProduct(newProduct.name);
-      console.log(result);
       expect(result).to.deep.equals(newProduct);
+    });
+  });
+});
+
+describe("7 - A chamada Services da função updateProduct deve:", () => {
+  describe("caso o nome do produto não tenha sido informado", () => {
+    const productName = "";
+    it('lançar um erro com a mensagem: "name" is required', async () => {
+      try {
+        await productsServices.updateProduct(1, productName);
+        expect.fail("deveria lançar um erro");
+      } catch (err) {
+        expect(err.message).to.equals('"name" is required');
+      }
+    });
+  });
+
+  describe("caso o nome do produto tenha menos que 5 caractéres", () => {
+    const productName = ">5";
+    it('lançar um erro com a mensagem: "name" length must be at least 5 characters long', async () => {
+      try {
+        await productsServices.updateProduct(1, productName);
+        expect.fail("deveria lançar um erro");
+      } catch (err) {
+        expect(err.message).to.equals(
+          '"name" length must be at least 5 characters long'
+        );
+      }
+    });
+  });
+
+  describe("caso o nome do produto seja informado corretamente, mas não encontre o produto", () => {
+    const affectedRows = 0;
+    const productName = 'Luva de Predero';
+    before(() => {
+      sinon.stub(models.productsModels, "updateProduct").resolves(affectedRows);
+    });
+    after(() => {
+      models.productsModels.updateProduct.restore();
+    });
+    it("lançar um erro com a mensagem: Product not found", async () => {
+      try {
+        await productsServices.updateProduct(1, productName);
+        expect.fail("deveria lançar um erro");
+      } catch (err) {
+        expect(err.message).to.equals("Product not found");
+      }
+    });
+  });
+  describe("caso o nome seja informado corretamente e o produto seja encontrado", () => {
+    const affectedRows = 1;
+    const productName = "Luva de Predero";
+    const result = {id: "1",  name: "Luva de Predero"};
+    before(() => {
+      sinon.stub(models.productsModels, "updateProduct").resolves(affectedRows);
+    });
+    after(() => {
+      models.productsModels.updateProduct.restore();
+    });
+    it('retornar a quantidade de produtos atualizados', async () => {
+      const updatedProduct = await productsServices.updateProduct(result.id, result.name);
+      expect(updatedProduct).to.equals(affectedRows);
     });
   });
 });
