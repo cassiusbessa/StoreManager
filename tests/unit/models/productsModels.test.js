@@ -131,3 +131,34 @@ describe("7 - A chamada Models da função updateProduct deve:", () => {
     });
   });
 });
+
+describe("8 - A chamada Models da função deleteProduct deve:", () => {
+  describe("Quando não recebe parâmetros", () => {
+    before(() => {
+      sinon.stub(connection, "execute").throws();
+    });
+    after(() => {
+      connection.execute.restore();
+    });
+    it("lança um erro", async () => {
+      try {
+        await productsModels.deleteProduct();
+      } catch (err) {
+        expect(err).to.exist;
+      }
+    });
+  });
+  describe("Quando chamado corretamente", () => {
+    const result = [{ affectedRows: 1 }];
+    before(() => {
+      sinon.stub(connection, "execute").resolves(result);
+    });
+    after(() => {
+      connection.execute.restore();
+    });
+    it("somente uma coluna deve ter sido alterada", async () => {
+      const updateProduct = await productsModels.deleteProduct(1);
+      expect(updateProduct).to.equals(result[0].affectedRows);
+    });
+  });
+});

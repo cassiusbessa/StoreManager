@@ -181,3 +181,37 @@ describe("7 - A chamada Services da função updateProduct deve:", () => {
   });
 });
 
+describe("8 - A chamada Services da função deleteProduct deve:", () => {
+  describe("caso o id do produto a ser deletado não seja encontrado", () => {
+  const affectedRows = 0;
+  before(() => {
+    sinon.stub(models.productsModels, "deleteProduct").resolves(affectedRows);
+  });
+  after(() => {
+    models.productsModels.deleteProduct.restore();
+  });
+  it("lançar um erro com a mensagem: Product not found", async () => {
+    try {
+      await productsServices.deleteProduct(1);
+      expect.fail("deveria lançar um erro");
+    } catch (err) {
+      expect(err.message).to.equals("Product not found");
+    }
+  });
+});
+  describe("caso o id do produto seja encontrado", () => {
+    const affectedRows = 1;
+    const productId = 1;
+    before(() => {
+      sinon.stub(models.productsModels, "deleteProduct").resolves(affectedRows);
+    });
+    after(() => {
+      models.productsModels.deleteProduct.restore();
+    });
+    it("retornar a quantidade de produtos atualizados", async () => {
+      const updatedProduct = await productsServices.deleteProduct(productId);
+      expect(updatedProduct).to.equals(affectedRows);
+    });
+  });
+});
+

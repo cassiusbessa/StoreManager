@@ -15,7 +15,6 @@ const newProductValidator = (name) => {
 const addProduct = async (productName) => {
   newProductValidator(productName);
   const newProduct = await models.productsModels.addProduct(productName);
-  console.log(newProduct);
   return newProduct;
 };
 

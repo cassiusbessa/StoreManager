@@ -271,3 +271,47 @@ describe("7 - A chamada Controllers da função updateProduct deve:", () => {
   });
 });
 
+describe("8 - A chamada Controllers da função deleteProduct deve:", () => {
+  describe("Caso o id do produto não seja encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.NOT_FOUND,
+      message: "Product not found",
+    };
+    before(() => {
+      request.params = "id not found";
+      request.body = { name: "12345" };
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.productsServices, "deleteProduct").throws(err);
+    });
+    after(() => {
+      services.productsServices.deleteProduct.restore();
+    });
+    it("ser chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await productsControllers.deleteProduct(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso o id do produto encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+
+    before(() => {
+      request.params = { id: 1 };
+      response.status = sinon.stub().returns(response);
+      sinon.stub(services.productsServices, "deleteProduct").resolves(1);
+    });
+    after(() => {
+      services.productsServices.deleteProduct.restore();
+    });
+    it("a resposta dever ter o corpo vazio e o status 204", async () => {
+      await productsControllers.deleteProduct(request, response, next);
+      expect(response.status.calledWith(204)).to.be.equal(true);
+    });
+  });
+});
+
