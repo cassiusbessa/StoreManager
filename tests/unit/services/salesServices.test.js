@@ -228,3 +228,38 @@ describe("6 - A chamada Services da função getSalesById deve: ", () => {
     });
   });
 });
+
+describe("9 - A chamada Services da função deleteSales deve:", () => {
+  describe("caso o id da venda a ser deletada não seja encontrado", () => {
+    const affectedRows = 0;
+    const saleId = 1;
+    before(() => {
+      sinon.stub(models.salesModels, "deleteSales").resolves(affectedRows);
+    });
+    after(() => {
+      models.salesModels.deleteSales.restore();
+    });
+    it("lançar um erro com a mensagem: Sale not found", async () => {
+      try {
+        await salesServices.deleteSales(saleId);
+        expect.fail("deveria lançar um erro");
+      } catch (err) {
+        expect(err.message).to.equals("Sale not found");
+      }
+    });
+  });
+  describe("caso o id da venda seja encontrado", () => {
+    const affectedRows = 1;
+    const productId = 1;
+    before(() => {
+      sinon.stub(models.salesModels, "deleteSales").resolves(affectedRows);
+    });
+    after(() => {
+      models.salesModels.deleteSales.restore();
+    });
+    it("retornar a quantidade de registro de vendas deletados", async () => {
+      const deletedProduct = await salesServices.deleteSales(productId);
+      expect(deletedProduct).to.equals(affectedRows);
+    });
+  });
+});

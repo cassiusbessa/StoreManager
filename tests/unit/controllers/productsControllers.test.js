@@ -282,7 +282,6 @@ describe("8 - A chamada Controllers da função deleteProduct deve:", () => {
     };
     before(() => {
       request.params = "id not found";
-      request.body = { name: "12345" };
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
       sinon.stub(services.productsServices, "deleteProduct").throws(err);
@@ -295,7 +294,7 @@ describe("8 - A chamada Controllers da função deleteProduct deve:", () => {
       expect(next.calledWith(err)).to.be.equal(true);
     });
   });
-  describe("Caso o id do produto encontrado no banco de dados", () => {
+  describe("Caso o id do produto seja encontrado no banco de dados", () => {
     const request = {};
     const response = {};
     const next = sinon.spy();

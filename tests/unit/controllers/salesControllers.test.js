@@ -148,3 +148,46 @@ describe("6 - A chamada Controllers da função getSalesById deve:", () => {
   });
 });
 
+describe("9 - A chamada Controllers da função deleteSales deve:", () => {
+  describe("Caso o id da venda não seja encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+    const err = {
+      status: httpStatusCode.NOT_FOUND,
+      message: "Sale not found",
+    };
+    before(() => {
+      request.params = "id not found";
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
+      sinon.stub(services.salesServices, "deleteSales").throws(err);
+    });
+    after(() => {
+      services.salesServices.deleteSales.restore();
+    });
+    it("ser chamada a função next passando como parâmetro um objeto de erro", async () => {
+      await salesControllers.deleteSales(request, response, next);
+      expect(next.calledWith(err)).to.be.equal(true);
+    });
+  });
+  describe("Caso o id da venda seja encontrado no banco de dados", () => {
+    const request = {};
+    const response = {};
+    const next = sinon.spy();
+
+    before(() => {
+      request.params = { id: 1 };
+      response.status = sinon.stub().returns(response);
+      sinon.stub(services.salesServices, "deleteSales").resolves(1);
+    });
+    after(() => {
+      services.salesServices.deleteSales.restore();
+    });
+    it("a resposta dever ter o corpo vazio e o status 204", async () => {
+      await salesControllers.deleteSales(request, response, next);
+      expect(response.status.calledWith(204)).to.be.equal(true);
+    });
+  });
+});
+
